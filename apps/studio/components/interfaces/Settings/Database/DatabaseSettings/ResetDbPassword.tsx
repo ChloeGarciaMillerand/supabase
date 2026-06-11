@@ -1,6 +1,7 @@
 import { PermissionAction } from '@supabase/shared-types/out/constants'
 import { useParams } from 'common'
 import { useEffect, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import {
   Button,
@@ -14,6 +15,9 @@ import {
   DialogSectionSeparator,
   DialogTitle,
   DialogTrigger,
+  Form,
+  FormControl,
+  FormField,
 } from 'ui'
 import { Input } from 'ui-patterns/DataInputs/Input'
 import { FormItemLayout } from 'ui-patterns/form/FormItemLayout/FormItemLayout'
@@ -34,11 +38,25 @@ import { useIsProjectActive, useSelectedProjectQuery } from '@/hooks/misc/useSel
 import { DEFAULT_MINIMUM_PASSWORD_STRENGTH } from '@/lib/constants'
 import { passwordStrength, PasswordStrengthScore } from '@/lib/password-strength'
 import { generateStrongPassword } from '@/lib/project'
+import * as z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
-const ResetDbPassword = ({ disabled = false }) => {
+const formSchema = z.object({
+  password: z.string().min(6, 'Your password must contain at least 6 character'),
+})
+
+type FormSchema = z.infer<typeof formSchema>
+
+export const ResetDbPassword = ({ disabled = false }) => {
   const { ref } = useParams()
   const isProjectActive = useIsProjectActive()
   const { data: project } = useSelectedProjectQuery()
+
+  const form = useForm<FormSchema>({
+      resolver: zodResolver(formSchema),
+    })
+
+  const formId = 'schema-form'
 
   const { can: canResetDbPassword } = useAsyncCheckPermissions(
     PermissionAction.UPDATE,
@@ -52,7 +70,11 @@ const ResetDbPassword = ({ disabled = false }) => {
 
   const [showResetDbPass, setShowResetDbPass] = useState<boolean>(false)
 
-  const [password, setPassword] = useState<string>('')
+  const password = useWatch({
+    control: form.control,
+    name: 'password',
+  }) ?? ''
+  
   const [passwordStrengthMessage, setPasswordStrengthMessage] = useState<string>('')
   const [passwordStrengthWarning, setPasswordStrengthWarning] = useState<string>('')
   const [passwordStrengthScore, setPasswordStrengthScore] = useState(0)
@@ -67,42 +89,52 @@ const ResetDbPassword = ({ disabled = false }) => {
 
   useEffect(() => {
     if (showResetDbPass) {
-      setPassword('')
+      form.reset({
+        password: '',
+      })
       setPasswordStrengthMessage('')
       setPasswordStrengthWarning('')
       setPasswordStrengthScore(0)
     }
-  }, [showResetDbPass])
+  }, [showResetDbPass, form])
 
-  async function checkPasswordStrength(value: any) {
+  async function checkPasswordStrength(value: string) {
     const { message, warning, strength } = await passwordStrength(value)
     setPasswordStrengthScore(strength)
     setPasswordStrengthWarning(warning)
     setPasswordStrengthMessage(message)
   }
 
-  const onDbPassChange = (e: any) => {
-    const value = e.target.value
-    setPassword(value)
-    if (value == '') {
+  useEffect(() => {
+    if (!password) {
       setPasswordStrengthScore(-1)
       setPasswordStrengthMessage('')
-    } else checkPasswordStrength(value)
-  }
-
-  const confirmResetDbPass = async () => {
-    if (!ref) return console.error('Project ref is required')
-
-    if (passwordStrengthScore >= DEFAULT_MINIMUM_PASSWORD_STRENGTH) {
-      resetDatabasePassword({ ref, password })
+      setPasswordStrengthWarning('')
+      return
     }
-  }
+
+    checkPasswordStrength(password)
+  }, [password])
 
   function generatePassword() {
     const password = generateStrongPassword()
-    setPassword(password)
-    checkPasswordStrength(password)
+    form.setValue('password', password, {
+      shouldValidate: true,
+    })
   }
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+      if (!ref) return console.error('Project is required')
+
+      if (passwordStrengthScore < DEFAULT_MINIMUM_PASSWORD_STRENGTH) {
+        return
+      }
+  
+      resetDatabasePassword({
+        ref,
+        password: values.password,
+      })
+    }
 
   return (
     <>
@@ -149,29 +181,39 @@ const ResetDbPassword = ({ disabled = false }) => {
                   </DialogHeader>
                   <DialogSectionSeparator />
                   <DialogSection className="w-full space-y-8">
-                    <FormItemLayout
-                      layout="vertical"
-                      isReactForm={false}
-                      error={passwordStrengthWarning}
-                      description={
-                        <PasswordStrengthBar
-                          passwordStrengthScore={passwordStrengthScore as PasswordStrengthScore}
-                          passwordStrengthMessage={passwordStrengthMessage}
-                          password={password}
-                          generateStrongPassword={generatePassword}
+                    <Form {...form}>
+                      <form id={formId} onSubmit={form.handleSubmit(onSubmit)}>
+                        <FormField
+                          control={form.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItemLayout
+                              layout="vertical"
+                              description={
+                                <PasswordStrengthBar
+                                  passwordStrengthScore={passwordStrengthScore as PasswordStrengthScore}
+                                  passwordStrengthMessage={passwordStrengthMessage}
+                                  password={password}
+                                  generateStrongPassword={generatePassword}
+                                />
+                              }
+                              error={passwordStrengthWarning}
+                            >
+                              <FormControl>
+                                <Input
+                                   {...field}
+                                  copy={password.length > 0}
+                                  aria-invalid={!!passwordStrengthWarning}
+                                  type="password"
+                                  placeholder="Type in a strong password"
+                                  autoComplete="off"
+                                />
+                              </FormControl>
+                            </FormItemLayout>
+                          )}
                         />
-                      }
-                    >
-                      <Input
-                        copy={password.length > 0}
-                        aria-invalid={!!passwordStrengthWarning}
-                        type="password"
-                        placeholder="Type in a strong password"
-                        value={password}
-                        autoComplete="off"
-                        onChange={onDbPassChange}
-                      />
-                    </FormItemLayout>
+                      </form>
+                    </Form>
                   </DialogSection>
                   <DialogFooter>
                     <Button
@@ -183,9 +225,10 @@ const ResetDbPassword = ({ disabled = false }) => {
                     </Button>
                     <Button
                       type="primary"
+                      form={formId}
+                      htmlType="submit"
                       loading={isUpdatingPassword}
                       disabled={isUpdatingPassword}
-                      onClick={() => confirmResetDbPass()}
                     >
                       Reset password
                     </Button>
@@ -199,5 +242,3 @@ const ResetDbPassword = ({ disabled = false }) => {
     </>
   )
 }
-
-export default ResetDbPassword
