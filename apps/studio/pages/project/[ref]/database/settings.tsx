@@ -13,7 +13,7 @@ import { DiskManagementPanelForm } from '@/components/interfaces/DiskManagement/
 import { BannedIPs } from '@/components/interfaces/Settings/Database/BannedIPs'
 import { ConnectionPooling } from '@/components/interfaces/Settings/Database/ConnectionPooling/ConnectionPooling'
 import { DatabaseReadOnlyAlert } from '@/components/interfaces/Settings/Database/DatabaseReadOnlyAlert'
-import ResetDbPassword from '@/components/interfaces/Settings/Database/DatabaseSettings/ResetDbPassword'
+import { ResetDbPassword } from '@/components/interfaces/Settings/Database/DatabaseSettings/ResetDbPassword'
 import { DiskSizeConfiguration } from '@/components/interfaces/Settings/Database/DiskSizeConfiguration'
 import { JitDbAccessConfiguration } from '@/components/interfaces/Settings/Database/JitDatabaseAccess/JitDbAccessConfiguration'
 import { NetworkRestrictions } from '@/components/interfaces/Settings/Database/NetworkRestrictions/NetworkRestrictions'
