@@ -137,11 +137,10 @@ export const ResetDbPassword = ({ disabled = false }) => {
     }
 
   return (
-    <>
-      <PageSection id="database-password">
-        <PageSectionMeta>
-          <PageSectionSummary>
-            <PageSectionTitle>Database password</PageSectionTitle>
+    <PageSection id="database-password">
+      <PageSectionMeta>
+        <PageSectionSummary>
+          <PageSectionTitle>Database password</PageSectionTitle>
 
             <PageSectionDescription>Used for direct Postgres connections</PageSectionDescription>
           </PageSectionSummary>
@@ -239,6 +238,5 @@ export const ResetDbPassword = ({ disabled = false }) => {
           </Card>
         </PageSectionContent>
       </PageSection>
-    </>
   )
 }
