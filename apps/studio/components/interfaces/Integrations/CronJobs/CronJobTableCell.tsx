@@ -145,15 +145,21 @@ export const CronJobTableCell = ({
     return (
       <div className="flex items-center">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="text"
-              loading={isRunning}
-              className="h-6 w-6"
-              icon={<MoreVertical />}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label={`${jobname} actions`}
+                  variant="text"
+                  loading={isRunning}
+                  className="h-6 w-6"
+                  icon={<MoreVertical />}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">{`${jobname} actions`}</TooltipContent>
+          </Tooltip>
           <DropdownMenuContent align="end" className="w-44 space-y-1">
             <Tooltip>
               <TooltipTrigger className="w-full">
