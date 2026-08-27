@@ -35,6 +35,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from 'ui'
+import { FormItemLayout } from 'ui-patterns/form/FormItemLayout/FormItemLayout'
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -147,19 +148,21 @@ export const PolicyDetailsV2 = ({
             control={form.control}
             name="table"
             render={({ field }) => (
-              <FormItem className="col-span-6 flex flex-col gap-y-1">
-                <FormLabel>
-                  Table
-                  <code className="text-code-inline">on</code> clause
-                </FormLabel>
+              <FormItemLayout
+                layout="vertical"
+                label="table on clause"
+                id="table"
+                className="col-span-6 w-full"
+              >
                 {authContext === 'database' && (
-                  <FormControl>
+                  <FormControl className="col-span-6">
                     <Popover open={open} onOpenChange={setOpen} modal={false}>
                       <PopoverTrigger asChild>
                         <Button
+                          id="table"
                           variant="default"
                           disabled={!canUpdatePolicies}
-                          className="w-full [&>span]:w-full h-[38px] text-sm"
+                          className={`w-full [&>span]:w-full text-left`}
                           iconRight={
                             <ChevronsUpDown
                               className="text-foreground-muted"
@@ -168,11 +171,7 @@ export const PolicyDetailsV2 = ({
                             />
                           }
                         >
-                          <div className="w-full flex gap-1">
-                            <span className="text-foreground">
-                              {schema}.{field.value}
-                            </span>
-                          </div>
+                          {schema}.{field.value}
                         </Button>
                       </PopoverTrigger>
 
@@ -216,17 +215,19 @@ export const PolicyDetailsV2 = ({
                   </FormControl>
                 )}
                 {authContext === 'realtime' && (
-                  <FormControl>
-                    <Input
-                      disabled
-                      value="messages.realtime"
-                      className="bg-control border-control"
-                    />
-                  </FormControl>
+                  <div className="col-span-6">
+                    <FormControl>
+                      <Input
+                        disabled
+                        value="messages.realtime"
+                        className="bg-control border-control"
+                      />
+                    </FormControl>
+                  </div>
                 )}
 
                 <FormMessage />
-              </FormItem>
+              </FormItemLayout>
             )}
           />
 
