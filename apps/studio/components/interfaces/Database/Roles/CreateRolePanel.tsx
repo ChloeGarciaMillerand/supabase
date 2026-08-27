@@ -12,6 +12,7 @@ import {
   SidePanel,
   Switch,
 } from 'ui'
+import { FormItemLayout } from 'ui-patterns/form/FormItemLayout/FormItemLayout'
 import z from 'zod'
 
 import { ROLE_PERMISSIONS } from './Roles.constants'
@@ -133,15 +134,22 @@ export const CreateRolePanel = ({ visible, onClose }: CreateRolePanelProps) => {
                       control={form.control}
                       name={permissionKey}
                       render={({ field }) => (
-                        <FormItem className="grid gap-2 md:grid md:grid-cols-12 space-y-0">
-                          <FormControl className="col-span-8 flex items-center gap-4">
-                            <div className="w-full text-sm">
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                              <FormLabel>{permission.description}</FormLabel>
+                        <FormItemLayout layout="vertical" id={permission.description}>
+                          <FormControl className="col-span-6 ">
+                            <div className="flex w-full items-center gap-4 text-sm">
+                              <Switch
+                                aria-label={permission.description}
+                                id={permission.description}
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                              <FormLabel htmlFor={permissionKey}>
+                                {permission.description}
+                              </FormLabel>
                             </div>
                           </FormControl>
                           <FormMessage className="col-start-5 col-span-8" />
-                        </FormItem>
+                        </FormItemLayout>
                       )}
                     />
                   )
@@ -162,20 +170,28 @@ export const CreateRolePanel = ({ visible, onClose }: CreateRolePanelProps) => {
                         control={form.control}
                         name={permissionKey}
                         render={({ field }) => (
-                          <FormItem className="space-y-0 opacity-70">
-                            <FormControl className="flex items-center gap-4">
-                              <div className="w-full text-sm">
+                          <FormItemLayout
+                            layout="vertical"
+                            id={permission.description}
+                            className="opacity-70"
+                          >
+                            <FormControl className="col-span-6">
+                              <div className="flex items-center gap-4 text-sm">
                                 <Switch
+                                  aria-label={permission.description}
+                                  id={permission.description}
                                   checked={field.value}
                                   onCheckedChange={field.onChange}
                                   disabled
                                   aria-readonly
                                 />
-                                <FormLabel>{permission.description}</FormLabel>
+                                <FormLabel htmlFor={permissionKey}>
+                                  {permission.description}
+                                </FormLabel>
                               </div>
                             </FormControl>
                             <FormMessage className="col-start-5 col-span-8" />
-                          </FormItem>
+                          </FormItemLayout>
                         )}
                       />
                     )
