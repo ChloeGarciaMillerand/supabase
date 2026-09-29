@@ -324,7 +324,7 @@ export const FileExplorerHeader = ({
                             aria-describedby={undefined}
                           />
                         </TooltipTrigger>
-                        <TooltipContent side='bottom'>Clear search</TooltipContent>
+                        <TooltipContent side="bottom">Clear search</TooltipContent>
                       </Tooltip>,
                     ]
                   : undefined
@@ -432,7 +432,13 @@ export const FileExplorerHeader = ({
 
             <div className="flex shrink-0 items-center gap-1">
               <div className="hidden">
-                <input ref={uploadButtonRef} type="file" multiple onChange={onFilesUpload} aria-label="Upload files"/>
+                <input
+                  ref={uploadButtonRef}
+                  type="file"
+                  multiple
+                  onChange={onFilesUpload}
+                  aria-label="Upload files"
+                />
               </div>
               <ShortcutTooltip
                 shortcutId={SHORTCUT_IDS.STORAGE_EXPLORER_NEW_FOLDER}
