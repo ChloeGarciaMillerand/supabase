@@ -106,6 +106,7 @@ export const FileExplorerRowEditing = ({
           onSubmit={(event) => onSaveItemName(itemName.trim() || item.name, event)}
         >
           <input
+            aria-label="File name"
             autoFocus
             ref={inputRef}
             className="storage-row-input ml-3 h-full bg-inherit p-0 px-1 text-sm"
@@ -119,6 +120,7 @@ export const FileExplorerRowEditing = ({
             className="hidden"
             type="submit"
             onClick={(event) => onSaveItemName(itemName.trim() || item.name, event)}
+            aria-label="Save name"
           />
         </form>
       </div>
