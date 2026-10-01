@@ -1,6 +1,6 @@
 import { PermissionAction } from '@supabase/shared-types/out/constants'
 import { Download, Move, Trash2, X } from 'lucide-react'
-import { Button } from 'ui'
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from 'ui'
 
 import { bulkActionBarClassName } from './storageExplorerChrome'
 import { ButtonTooltip } from '@/components/ui/ButtonTooltip'
@@ -90,14 +90,21 @@ export const FileExplorerHeaderSelection = () => {
           </ButtonTooltip>
         </ShortcutTooltip>
 
-        <Button
-          variant="text"
-          size="tiny"
-          icon={<X size={12} />}
-          title="Clear selection"
-          className="px-1.5 text-foreground-lighter hover:text-foreground"
-          onClick={() => clearSelectedItems()}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="text"
+              size="tiny"
+              icon={<X size={12} />}
+              aria-label="Clear selection"
+              className="px-1.5 text-foreground-lighter hover:text-foreground"
+              onClick={() => clearSelectedItems()}
+              // Tooltip repeats the label; screen readers would read it twice
+              aria-describedby={undefined}
+            />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Clear selection</TooltipContent>
+        </Tooltip>
       </div>
     </div>
   )
