@@ -340,15 +340,22 @@ export const FileExplorerHeader = ({
           <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
             <div className="flex shrink-0 items-center gap-1">
               {view === STORAGE_VIEWS.COLUMNS && (
-                <Button
-                  size="tiny"
-                  icon={<Edit2Icon />}
-                  variant="outline"
-                  aria-label="Navigate"
-                  className="w-7 px-1"
-                  disabled={isPathDialogOpen}
-                  onClick={onOpenNavigate}
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="tiny"
+                      icon={<Edit2Icon />}
+                      variant="outline"
+                      aria-label="Navigate"
+                      className="w-7 px-1"
+                      disabled={isPathDialogOpen}
+                      onClick={onOpenNavigate}
+                      // Tooltip repeats the label; screen readers would read it twice
+                      aria-describedby={undefined}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">Navigate</TooltipContent>
+                </Tooltip>
               )}
               <ShortcutTooltip shortcutId={SHORTCUT_IDS.STORAGE_EXPLORER_REFRESH} side="bottom">
                 <Button
@@ -363,15 +370,22 @@ export const FileExplorerHeader = ({
               </ShortcutTooltip>
 
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="tiny"
-                    aria-label="View options"
-                    className="w-7 px-1"
-                    icon={view === 'LIST' ? <ListIcon size={16} /> : <ColumnsIcon size={16} />}
-                  />
-                </DropdownMenuTrigger>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="tiny"
+                        aria-label="View options"
+                        className="w-7 px-1"
+                        icon={view === 'LIST' ? <ListIcon size={16} /> : <ColumnsIcon size={16} />}
+                        // Tooltip repeats the label; screen readers would read it twice
+                        aria-describedby={undefined}
+                      />
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">View options</TooltipContent>
+                </Tooltip>
                 <DropdownMenuContent align="end" className="w-40 min-w-0">
                   {VIEW_OPTIONS.map((option) => (
                     <DropdownMenuItem key={option.key} onClick={() => setView(option.key)}>
